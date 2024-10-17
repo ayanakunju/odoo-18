@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="FieldRangeSlider" owl="1">
+        <div class="slidecontainer" t-on-change="getValue">
+            <input type="range" t-att-min="state.min or 1" t-att-max="state.max or 10" value="state.value"/>
+            <p>Value:
+                <span>
+                    <t t-esc="state.value"/>
+                </span>
+            </p>
+        </div>
+    </t>
+</templates>
