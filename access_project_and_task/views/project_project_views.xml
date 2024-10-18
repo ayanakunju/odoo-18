@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
     <record id="edit_project" model="ir.ui.view">
-        <field name="name">project.project.view.form.inherit.project.task.access</field>
+        <field name="name">project.project.view.form.inherit</field>
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.edit_project"/>
         <field name="arch" type="xml">
