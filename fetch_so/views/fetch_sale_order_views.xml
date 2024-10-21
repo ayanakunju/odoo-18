@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="fetch_so_view_form" model="ir.ui.view">
+        <field name="name">fetch.sale.order.view.form</field>
+        <field name="model">fetch.sale.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <span>Click the button to import the sale orders</span>
+                <footer>
+                    <button type="object" name="action_fetch_so" string="Fetch" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="fetch_so_action" model="ir.actions.act_window">
+        <field name="name">Fetch Sale Orders From odoo17</field>
+        <field name="res_model">fetch.sale.order</field>
+        <field name="target">new</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="fetch_so_view_form"/>
+    </record>
+
+    <menuitem id="fetch_so_wizard_menu" name="Import SO" action="fetch_so_action"
+              parent="sale.sale_menu_root"/>
+</odoo>
