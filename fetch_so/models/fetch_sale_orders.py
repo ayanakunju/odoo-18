@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import xmlrpc.client
-from odoo import models
 import re
 
+from odoo import models
 
-class FetchSaleorder(models.TransientModel):
+
+class FetchSaleOrder(models.TransientModel):
     _name = 'fetch.sale.order'
     _description = 'Fetch Sale Order'
 
     def action_fetch_so(self):
         """Fetching details of v17  and v18 db from the wizard and importing"""
 
-    # database 1 version 17
+        # database 1 version 17
         url_db1 = "http://localhost:8016"
         db_1 = 'saleorder_migration'
         username_db_1 = '1'
@@ -22,7 +23,7 @@ class FetchSaleorder(models.TransientModel):
         print('+++', common_1.version())
         # version_db1 = common_1.version()
 
-    # database 2 version 18
+        # database 2 version 18
         url_db2 = "http://localhost:8018"
         db_2 = 'data_migration'
         username_db_2 = '2'
@@ -37,20 +38,21 @@ class FetchSaleorder(models.TransientModel):
         print('uid_db2', uid_db2)
 
         db_1_so = models_1.execute_kw(db_1, uid_db1, password_db_1, 'sale.order', 'search_read', [], {
-            'fields': ['name', 'partner_id', 'user_id', 'amount_total', 'order_line', 'state','date_order'],
+            'fields': ['name', 'partner_id', 'user_id', 'amount_total', 'order_line', 'state', 'date_order'],
             'domain': [('state', '=', 'sale')]
         })
         print('sooooooooo', db_1_so)
 
         db_1_partner = models_1.execute_kw(db_1, uid_db1, password_db_1, 'res.partner', 'search_read', [],
-                                           {'fields': ['id', 'name', 'email']})
+                                           {'fields': ['id', 'name', 'email', 'image_1920']})
         print('partners', db_1_partner)
 
         db_1_product = models_1.execute_kw(db_1, uid_db1, password_db_1, 'product.template', 'search_read', [],
-                                           {'fields': ['id', 'name', 'list_price', 'invoice_policy']})
+                                           {'fields': ['id', 'name', 'list_price',
+                                                       'invoice_policy', 'image_1920', 'default_code']})
         print('products', db_1_product)
 
-    # Creating partners in current db from old db
+        # Creating partners in current db from old db
         for rec in db_1_partner:
             db_2_partners = models_2.execute_kw(db_2, uid_db2, password_db_2, 'res.partner', 'search_read', [],
                                                 {'domain': [('name', '=', rec['name'])]})
@@ -59,12 +61,13 @@ class FetchSaleorder(models.TransientModel):
                                                    [{
                                                        'name': rec['name'],
                                                        'id': rec['id'],
-                                                       'email': rec['email']
+                                                       'email': rec['email'],
+                                                       'image_1920': rec['image_1920'],
                                                    }]
                                                    )
                 print('new_partners', new_partners)
 
-    # Creating products in current db from old db
+        # Creating products in current db from old db
         for rec in db_1_product:
             db_2_products = models_2.execute_kw(db_2, uid_db2, password_db_2, 'product.template', 'search_read', [],
                                                 {'domain': [('name', '=', rec['name'])]})
@@ -74,12 +77,15 @@ class FetchSaleorder(models.TransientModel):
                                                        'name': rec['name'],
                                                        'id': rec['id'],
                                                        'list_price': rec['list_price'],
-                                                       'invoice_policy':rec['invoice_policy']
+                                                       'invoice_policy': rec['invoice_policy'],
+                                                       'image_1920': rec['image_1920'],
+                                                       'default_code': rec['default_code'],
+
                                                    }]
                                                    )
                 print('new_products', new_products)
 
-    # Creating sale order in current db from old db
+        # Creating sale order in current db from old db
         for rec in db_1_so:
             partner = self.env['res.partner'].search([('name', '=', rec['partner_id'][1])])
             sale_order = self.env['sale.order'].sudo().search([('name', '=', rec['name'])]).id
@@ -89,27 +95,34 @@ class FetchSaleorder(models.TransientModel):
                                                      'name': rec['name'],
                                                      'partner_id': partner.id,
                                                      'amount_total': rec['amount_total'],
-                                                     # 'order_line': order_line[0],
                                                      'state': rec['state'],
                                                      'date_order': rec['date_order'],
 
                                                  }]
                                                  )
+                print('sale_order', sale_order)
+
                 order_line = models_1.execute_kw(db_1, uid_db1, password_db_1, 'sale.order.line',
                                                  'search_read', [],
                                                  {'domain': [('order_id', '=', rec['id'])]})
                 for record in order_line:
-                    product_new = self.env['product.template'].search([('name', '=', 'product_id')])
+                    product_obj = re.sub(r"\[.*?\]", "", record['product_id'][1])
+                    product_name = product_obj.strip()
+                    # product_new = self.env['product.template'].search([('name', '=', product_name)])
+                    product_new = self.env['product.template'].search([('name', '=', product_name)])
                     orders = self.env['sale.order'].browse(sale_order)
-                    vals = {
-                        'name': record['name'],
-                        'product_id': product_new.id,
-                        'order_id': int(orders.id),
-                        'product_uom_qty': record['product_uom_qty'],
-                        'price_unit': record['price_unit'],
-                        'product_uom': record['product_uom'][0],
-                        'display_type': record['display_type']
-                    }
-                    models_2.execute_kw(db_2, uid_db2, password_db_2, 'sale.order.line', 'create', [vals])
-
-
+                    models_2.execute_kw(db_2, uid_db2, password_db_2, 'sale.order.line', 'create',
+                                        [{
+                                            # 'name': record['name'],
+                                            'name': product_name,
+                                            'product_id': product_new.product_variant_id.id,
+                                            'order_id': int(orders.id),
+                                            'product_uom_qty': record['product_uom_qty'],
+                                            'price_unit': record['price_unit'],
+                                            'product_uom': record['product_uom'][0],
+                                            'display_type': record['display_type'],
+                                            'price_subtotal': record['price_subtotal'],
+                                            'tax_id': record['tax_id'],
+                                        }]
+                                        )
+                    print('order_line', order_line)

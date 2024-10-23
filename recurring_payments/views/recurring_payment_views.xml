@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_recurring_list" model="ir.ui.view">
+        <field name="name">recurring.payments.list</field>
+        <field name="model">recurring.payments</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" string="Name"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_recurring_payments" model="ir.ui.view">
+        <field name="name">recurring.payments.form</field>
+        <field name="model">recurring.payments</field>
+        <field name="arch" type="xml">
+            <form string="Recurring">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,running"
+                           options="{'clickable':'1', 'fold_field': 'fold'}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" string="Name"/>
+                            <field name="pay_time" string="Pay Time"/>
+                            <field name="credit_account" string="Credit Account"/>
+                            <field name="debit_account" string="Debit Account"/>
+                            <field name="journal" string="Journal"/>
+                        </group>
+                        <group>
+                            <field name="recurring_period" string="Recurring Period"/>
+                            <field name="recurring_interval" string="Recurring Interval"/>
+                            <field name="starting_date" string="Starting Date"/>
+                            <field name="next_schedule" string="Next Schedule"/>
+                            <field name="ending_date" string="Ending Date"/>
+                            <field name="amount" string="Amount"/>
+                            <field name="generate_journal" string="Generate Journal As"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="Add a note..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="recurring_payments" model="ir.actions.act_window">
+        <field name="name">Recurring Payment Template</field>
+        <field name="res_model">recurring.payments</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="recurring_templates" name="Recurring Templates" action="recurring_payments"
+              parent="account.root_payment_menu"/>
+</odoo>

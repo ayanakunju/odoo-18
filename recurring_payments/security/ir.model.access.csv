@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_recurring_payments,access.recurring.payments,model_recurring_payments,base.group_user,1,1,1,1
+access_journal_entry_wizard,access.journal.entry.wizard,model_journal_entry_wizard,base.group_user,1,1,1,1

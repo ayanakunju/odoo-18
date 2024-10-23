@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="journal_entry_wizard" model="ir.ui.view">
+        <field name="name">journal.entry.wizard.view.form</field>
+        <field name="model">journal.entry.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="starting_date" string="Starting Date"/>
+                <field name="ending_date" string="Ending Date"/>
+
+                <footer>
+                    <!--                    <button type="object" name="action_generate_entry" string="Generate Entry" class="btn-primary"/>-->
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="generate_action" model="ir.actions.act_window">
+        <field name="name">Recurring payments</field>
+        <field name="res_model">journal.entry.wizard</field>
+        <field name="target">new</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="journal_entry_wizard"/>
+    </record>
+
+    <menuitem id="recurring_entries" name="Recurring Entries" action="generate_action"
+             sequence="40"
+        parent="account.menu_finance_receivables"/>
+</odoo>

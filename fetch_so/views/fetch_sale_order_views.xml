@@ -22,6 +22,7 @@
         <field name="view_id" ref="fetch_so_view_form"/>
     </record>
 
-    <menuitem id="fetch_so_wizard_menu" name="Import SO" action="fetch_so_action"
-              parent="sale.sale_menu_root"/>
+    <menuitem id="import_so_menu" name="Import SO" action="fetch_so_action"
+              parent="sale.menu_sale_config"/>
+    <!--    parent = sale.sale_menu_root-->
 </odoo>
