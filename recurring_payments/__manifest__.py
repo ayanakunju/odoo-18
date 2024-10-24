@@ -14,6 +14,7 @@
         'security/ir.model.access.csv',
         'views/recurring_payment_views.xml',
         'views/journal_entry_wizard.xml',
+        'data/recurring_entry_cron.xml',
     ],
 
     'application': True,

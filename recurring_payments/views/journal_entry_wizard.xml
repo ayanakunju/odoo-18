@@ -5,13 +5,28 @@
         <field name="model">journal.entry.wizard</field>
         <field name="arch" type="xml">
             <form>
-                <field name="starting_date" string="Starting Date"/>
-                <field name="ending_date" string="Ending Date"/>
-
-                <footer>
-                    <!--                    <button type="object" name="action_generate_entry" string="Generate Entry" class="btn-primary"/>-->
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
-                </footer>
+                <sheet>
+                    <group>
+                        <field name="starting_date" string="Starting Date"/>
+                        <field name="ending_date" string="Ending Date"/>
+                        <notebook>
+                            <page name="remaining_entries" string="Remaining entries">
+                                <field name="recurring_lines">
+                                    <list string="Recurring Lines" create="false" editable="top">
+                                        <field name="starting_date" string="Date"/>
+                                        <field name="template_name"/>
+                                        <field name="amount"/>
+                                        <field name="tmpl_id" invisible="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                    <footer>
+                        <button type="object" name="action_generate_entry" string="Generate Entry" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
             </form>
         </field>
     </record>
@@ -25,6 +40,6 @@
     </record>
 
     <menuitem id="recurring_entries" name="Recurring Entries" action="generate_action"
-             sequence="40"
-        parent="account.menu_finance_receivables"/>
+              sequence="40"
+              parent="account.menu_finance_receivables"/>
 </odoo>
