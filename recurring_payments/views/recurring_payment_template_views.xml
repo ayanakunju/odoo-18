@@ -6,6 +6,8 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name" string="Name"/>
+                <field name="starting_date" string="Starting Date"/>
+                <field name="journal" string="Journal"/>
             </list>
         </field>
     </record>

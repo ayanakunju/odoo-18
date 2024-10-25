@@ -16,7 +16,7 @@
                                         <field name="starting_date" string="Date"/>
                                         <field name="template_name"/>
                                         <field name="amount"/>
-                                        <field name="tmpl_id" invisible="1"/>
+                                        <field name="tmpl_id" />
                                     </list>
                                 </field>
                             </page>

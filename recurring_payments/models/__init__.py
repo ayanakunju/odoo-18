@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from . import reccuring_payments
-from . import recurring_journal_entry
+from . import recurring_payment_template
+from . import journal_entry_wizard
+from . import recurring_order_lines
