@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" inherit_id="point_of_sale_template" xml:space="preserve">
+    <t t-inherit="point_of_sale.Orderline" t-inherit-mode="extension">
+        <xpath expr="//li[hasclass('orderline')]//div[hasclass('d-flex')]//div[hasclass('product-price')]"
+               position="after">
+            <t>
+                <i style="margin-left: 3%;" id="clear_icon"
+                   class="fa fa-times-circle"
+                   t-on-click="removeLine"/>
+            </t>
+        </xpath>
+    </t>
+</templates>

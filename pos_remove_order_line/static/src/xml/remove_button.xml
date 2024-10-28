@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="pos_remove_order_line.order_line_remove" t-inherit="point_of_sale.ProductScreen"
+       t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('pads')]//div[hasclass('control-buttons)]" position="after">
+            <div>
+            <button class="control-button btn btn-light text-bg-danger rounded-0 fw-bolder" t-on-click="ClearAll">
+                <i class="fa fa-eraser"> </i>
+                <span>Clear All</span>
+            </button>
+            </div>
+        </xpath>
+   </t>
+</templates>
+
+
+        <!--Uncaught Error: Error while loading "@pos_remove_order_line/js/remove_button":-->
+        <!--TypeError: ProductScreen.addControlButton is not a function-->
