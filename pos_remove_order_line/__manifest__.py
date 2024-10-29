@@ -12,9 +12,9 @@
 
     'assets': {
         'point_of_sale._assets_pos': [
-            # 'pos_remove_order_line/static/src/js/remove_button.js',
+            'pos_remove_order_line/static/src/js/remove_button.js',
             'pos_remove_order_line/static/src/js/remove_order_line.js',
-            # 'pos_remove_order_line/static/src/xml/remove_button.xml',
+            'pos_remove_order_line/static/src/xml/remove_button.xml',
             'pos_remove_order_line/static/src/xml/remove_order_line.xml',
         ]
     },
