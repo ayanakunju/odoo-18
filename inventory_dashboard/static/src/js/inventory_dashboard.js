@@ -2,32 +2,131 @@
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
-import { Component, onWillStart, useEffect, useState } from  "@odoo/owl";
+import { Component, onWillStart, useEffect, useState, useRef } from  "@odoo/owl";
 const actionRegistry = registry.category("actions");
 
 class InventoryDashboard extends Component {
     setup() {
-         super.setup()
-         this.orm = useService('orm')
+        super.setup()
+        this.orm = useService('orm')
+        this.barRef = useRef('data_bar')
+        this.pieRef = useRef('data_pie')
+//        this.doughnutRef = useRef('data_doughnut')
 
-    onWillStart(async () => {
-//              this.isStockManager = await user.hasGroup("stock.group_stock_manager");
-              this._inventory_data()
+        this.state = useState({
+                 fetch_data: {},
+                 location_data: {},
+                });
+
+
+        this.pieChart = null;
+        this.barChart = null;
+//        this.doughnutChart = null;
+
+        onWillStart(async () => {
+                  this._inventory_fetch_tile_data()
+                  this. _storage_location_table()
+
+            });
+
+        useEffect(() => {
+        this._location_data_pie()
+        this._product_average_expense_bar()
+//        this._stock_valuation_doughnut_chart()
         });
 
-    useEffect(() => {
-        });
     }
-    async _inventory_data() {
+
+    async _inventory_fetch_tile_data() {
            var self = this;
-//           const admin = this.isStockManager
            this.orm.call("stock.picking", "get_inventory_tiles_data", [], {}).then((result) => {
-           console.log(result)
-           document.getElementById('stock_incoming').append(result.stock_incoming);
-           document.getElementById('stock_outgoing').append(result.stock_outgoing);
-           document.getElementById('stock_internal').append(result.stock_internal);
+               this.state.fetch_data = result
+               console.log('rrrr',this.state.fetch_data)
+           });
+    }
+
+    async _location_data_pie(){
+        this.orm.call("stock.move", "get_stock_move_location", []).then( (result) => {
+            var name = result.name
+            var count = result.count;
+            var ctx = this.pieRef.el.id
+            if (this.pieChart){
+                this.pieChart.destroy();
+            }
+            this.pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: name,
+                    datasets: [{
+                        label: 'Count',
+                        data: count,
+                        barThickness: 10,
+                        type: 'pie',
+                        fill: false
+                    }]
+                },
+            });
         });
     }
+
+    async _product_average_expense_bar() {
+        this.orm.call("stock.picking", "get_product_average_expense", []).then((result) => {
+            var product_names = Object.keys(result);
+            var average_price = Object.values(result)
+            var ctx = this.barRef.el.id
+            if (this.barChart){
+            this.barChart.destroy();
+            }
+            this.barChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: product_names,
+                datasets: [{
+                    label: product_names,
+                    backgroundColor: [
+                                    "#003f5c","#2f4b7c","#f95d6a","#665191",
+                                    "#d45087","#ff7c43","#ffa600","#a05195",
+                                    "#6d5c16","#CCCCFF"
+                                ],
+                    data: average_price
+                }]
+            },
+            cost: {}
+              });
+        })
+       }
+    async _storage_location_table(){
+        await this.orm.call("stock.picking", "get_locations",[]
+        ).then((result) => {
+            this.state.location_data = result
+            console.log('dataaa',this.state.location_data)
+            });
+    }
+
+//    async _stock_valuation_doughnut_chart(){
+//        this.orm.call("stock.valuation.layer", "get_stock_value", []).then( (result) => {
+//            var product_names = result.name;
+//            var stock_value = result.stock_value;
+//            var ctx = this.doughnutRef.el.id
+//            if (this.doughnutChart){
+//            this.doughnutChart.destroy();
+//            }
+//            this.doughnutChart = new Chart(ctx, {
+//            type: "doughnut",
+//            data: {
+//                labels: product_names,
+//                datasets: [{
+//                    backgroundColor: [
+//                                   "#665191","#a05195",
+//                                    "#CCCCFF","#ffa600","#a05195",
+//                                    "#6d5c16","#CCCCFF"
+//                                ],
+//                    data: stock_value
+//                }]
+//               },
+//              });
+//             });
+//        }
 }
 InventoryDashboard.template = "inventory_dashboard.InventoryDashboard";
 actionRegistry.add("inventory_dashboard_tag", InventoryDashboard);

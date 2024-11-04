@@ -3,7 +3,7 @@
 {
     'name': "Inventory Dashboard",
     'version': '18.0.1.0',
-    'depends': ['base', 'stock'],
+    'depends': ['base', 'stock','stock_account'],
     'author': "Author Name",
     'category': 'Category',
     'description': """
@@ -17,6 +17,7 @@
         'web.assets_backend': [
             'inventory_dashboard/static/src/js/inventory_dashboard.js',
             'inventory_dashboard/static/src/xml/inventory_dashboard.xml',
+            'https://cdn.jsdelivr.net/npm/chart.js',
         ],
     },
 
