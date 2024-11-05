@@ -11,8 +11,8 @@ class InventoryDashboard extends Component {
         this.orm = useService('orm')
         this.barRef = useRef('data_bar')
         this.pieRef = useRef('data_pie')
-//        this.doughnutRef = useRef('data_doughnut')
-
+        this.doughnutRef = useRef('data_doughnut')
+        this.lineRef = useRef('data_line')
         this.state = useState({
                  fetch_data: {},
                  location_data: {},
@@ -21,7 +21,10 @@ class InventoryDashboard extends Component {
 
         this.pieChart = null;
         this.barChart = null;
-//        this.doughnutChart = null;
+        this.productChart = null;
+        this.doughnutChart = null;
+        this.lineChart = null;
+
 
         onWillStart(async () => {
                   this._inventory_fetch_tile_data()
@@ -29,11 +32,10 @@ class InventoryDashboard extends Component {
 
             });
 
-        useEffect(() => {
         this._location_data_pie()
         this._product_average_expense_bar()
-//        this._stock_valuation_doughnut_chart()
-        });
+        this._stock_valuation_doughnut_chart()
+        this._product_move_line_chart()
 
     }
 
@@ -91,10 +93,11 @@ class InventoryDashboard extends Component {
                     data: average_price
                 }]
             },
-            cost: {}
+            options: {}
               });
         })
        }
+
     async _storage_location_table(){
         await this.orm.call("stock.picking", "get_locations",[]
         ).then((result) => {
@@ -103,30 +106,59 @@ class InventoryDashboard extends Component {
             });
     }
 
-//    async _stock_valuation_doughnut_chart(){
-//        this.orm.call("stock.valuation.layer", "get_stock_value", []).then( (result) => {
-//            var product_names = result.name;
-//            var stock_value = result.stock_value;
-//            var ctx = this.doughnutRef.el.id
-//            if (this.doughnutChart){
-//            this.doughnutChart.destroy();
-//            }
-//            this.doughnutChart = new Chart(ctx, {
-//            type: "doughnut",
-//            data: {
-//                labels: product_names,
-//                datasets: [{
-//                    backgroundColor: [
-//                                   "#665191","#a05195",
-//                                    "#CCCCFF","#ffa600","#a05195",
-//                                    "#6d5c16","#CCCCFF"
-//                                ],
-//                    data: stock_value
-//                }]
-//               },
-//              });
-//             });
-//        }
+    async _stock_valuation_doughnut_chart(){
+        this.orm.call("stock.valuation.layer", "get_stock_value", []).then( (result) => {
+            var product_names = result.name;
+            var stock_value = result.stock_value;
+            var ctx = this.doughnutRef.el.id
+            if (this.doughnutChart){
+            this.doughnutChart.destroy();
+            }
+            this.doughnutChart = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: product_names,
+                datasets: [{
+                    backgroundColor: [
+                                   "#665191","#a05195",
+                                    "#CCCCFF","#ffa600","#a05195",
+                                    "#6d5c16","#CCCCFF"
+                                ],
+                    data: stock_value
+                }]
+               },
+              });
+             });
+        }
+
+    async _product_move_line_chart(){
+//       const admin = this.isStockManager
+//       console.log(admin, "_product_move_chart")
+        this.orm.call("stock.move.line", "get_product_moves",[]).then( (result) => {
+        var product_names = result.name;
+        var move_count = result.count;
+        var ctx = this.lineRef.el.id
+        if (this.lineChart){
+        this.lineChart.destroy();
+        }
+        this.lineChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: product_names,
+            datasets: [{
+                label: 'Product Move',
+                backgroundColor: [
+                                "#ff7c43","#2f4b7c","#a05195","#665191",
+                                "#d45087","#ff7c43","#ffa600","#a05195",
+                                "#6d5c16","#CCCCFF"
+                            ],
+                data: move_count
+           }]
+          },
+         });
+        });
+        }
+
 }
 InventoryDashboard.template = "inventory_dashboard.InventoryDashboard";
 actionRegistry.add("inventory_dashboard_tag", InventoryDashboard);

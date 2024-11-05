@@ -2,17 +2,10 @@
 <templates>
     <t t-name="inventory_dashboard.InventoryDashboard">
         <div class=""
-             style="overflow-y:auto; max-height: 100vh; padding: 10px;">
-            <div>
-                <center>
-                    <h1 style="margin:20px;">
-                        Inventory Dashboard
-                    </h1>
-                </center>
-            </div>
+             style="overflow-y:auto; max-height: 100vh; padding: 20px; overflow-x:auto;">
 
             <!--incoming stock product wise Tile-->
-            <div class="row main-section" style="margin-left: 120px;">
+            <div class="row main-section" style="margin-left: 70px; ">
                 <div id="incoming_tile" class="col-md-4 col-sm-6 tot_tasks oh-payslip"
                      style=" overflow: hidden; padding-top: 30px;">
                     <div class="oh-card" style="box-shadow:2px 4px 8px 2px rgba(0,0,0.3,0.2);
@@ -45,6 +38,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!--outgoing stock product wise Tile-->
                 <div id="outgoing_tile" class="col-md-4 col-sm-6 tot_tasks oh-payslip"
                      style=" overflow: hidden; padding-top: 30px;">
@@ -78,6 +72,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!--internal transfer product wise Tile-->
                 <div id="internal_transfer_tile"
                      class="col-md-4 col-sm-6 tot_tasks oh-payslip"
@@ -129,7 +124,6 @@
             </div>
 
             <!--   stock moves by location pie chart  -->
-            <!--            <div style="margin-right:100px; margin-left:100px; display:flex;">-->
             <div class="d-flex flex-row align-items-center" style="max-width:100vh;">
                 <div class="year_to_date_graph_div col-sm-12 col-md-6 my-4"
                      style="height: 400px; width: 400px; margin-left:100px;">
@@ -144,58 +138,93 @@
                     </div>
                 </div>
 
-                <!-- warehouse location table-->
-                <div class="year_to_date_graph_div col-sm-12 col-md-6 my-4 " style="margin-left:500px;">
-                    <div class="chart-container card-shadow" id="tiles" style="float:right;">
+                <!-- stock valuation doughnut chart-->
+                <div class="year_to_date_graph_div col-sm-12 col-md-6 my-4"
+                     style="height: 400px; width: 400px; margin-left:500px;">
+                    <div class="chart-container card-shadow" id="tiles" style="display: inline-block; float: right;">
                         <div style="height: 20px; max-height: 20px; text-align:center;">
-                            <h2>Locations</h2>
+                            <h2>Inventory Stock Valuation</h2>
                         </div>
+                        <div class="graph_canvas" style="margin-top: 30px;">
+                            <canvas id="canvas_doughnut" t-ref="data_doughnut"
+                                    style="height: 400px; width: 400px;"/>
+                        </div>
+                    </div>
+                </div>
 
-                        <table style="margin-top: 30px;"
-                               class="table table-hover" id="location_table">
-                            <thead>
+            </div>
+
+            <!-- warehouse location table-->
+            <div class="year_to_date_graph_div col-sm-12 col-md-6 my-4 " style="margin-left:500px;">
+                <div class="chart-container card-shadow" id="tiles" style="float:right;">
+                    <!--                    <div style="height: 20px; max-height: 20px; text-align:center;">-->
+                    <!--                        <h2>Locations</h2>-->
+                    <!--                    </div>-->
+
+                    <table style="margin-top: 30px;"
+                           class="table table-hover" id="location_table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <h3>Warehouse Location</h3>
+                                </th>
+                                <th>
+                                    <h3>On Hand Quantity
+                                    </h3>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="storage">
+                            <t t-foreach="this.state.location_data"
+                               t-as="location" t-key="location_index">
                                 <tr>
-                                    <th>
-                                        <h3>Warehouse Location</h3>
-                                    </th>
-                                    <th>
-                                        <h3>On Hand Quantity
-                                        </h3>
-                                    </th>
+                                    <td>
+                                        <t t-out="location"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="this.state.location_data[location]"/>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="storage">
-                                <t t-foreach="this.state.location_data"
-                                   t-as="location" t-key="location_index">
-                                    <tr>
-                                        <td>
-                                            <t t-out="location"/>
-                                        </td>
-                                        <td>
-                                            <t t-esc="this.state.location_data[location]"/>
-                                        </td>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-flex flex-row align-items-center" style="max-width:100vh; margin-left:50px;">
+                <div class="year_to_date_graph_div col-sm-12 col-md-6 my-4"
+                     style="width:60%;">
+                    <div class="chart-container card-shadow" id="tiles">
+                        <div style="height: 20px; max-height: 20px; text-align:center;">
+                            <h2>Product Move Chart</h2>
+                        </div>
+<!--                        <div class="form-group col-2"-->
+<!--                             id="top_product_button" style="float:right;">-->
+<!--                            <select id="filter_selection"-->
+<!--                                    t-on-change="onchange_filter_selection"-->
+<!--                                    style="color:black; " t-ref="filter">-->
+<!--                                <option id="all_moves"-->
+<!--                                        value="all_moves">All Moves-->
+<!--                                </option>-->
+<!--                                <option id="this_month"-->
+<!--                                        value="this_month">This Month-->
+<!--                                </option>-->
+<!--                                <option id="this_week"-->
+<!--                                        value="this_week">This Week-->
+<!--                                </option>-->
+
+<!--                            </select>-->
+<!--                        </div>-->
+                        <div class="graph_canvas" style="margin-top: 30px;">
+                            <canvas id="product_move_bar" height="150px" t-ref="data_line"
+                                    width="200px"/>
+                        </div>
                     </div>
                 </div>
             </div>
+         <br/>
+         <br/>
         </div>
     </t>
 </templates>
 
-
-        <!-- stock valuation doughnut chart-->
-        <!--            <div class="year_to_date_graph_div col-sm-12 col-md-6 my-4"-->
-        <!--                 style="height: 400px; width: 400px;">-->
-        <!--                <div class="chart-container card-shadow" id="tiles" style="display: inline-block; float: right;">-->
-        <!--                    <div style="height: 20px; max-height: 20px; text-align:center;">-->
-        <!--                        <h2>Stock Valuation Graph</h2>-->
-        <!--                    </div>-->
-        <!--                    <div class="graph_canvas" style="margin-top: 30px;">-->
-        <!--                        <canvas id="canvas_doughnut" t-ref="data_doughnut"-->
-        <!--                                style="height: 400px; width: 400px;"/>-->
-        <!--                    </div>-->
-        <!--                </div>-->
-        <!--            </div>-->
