@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api
+from odoo import models, api, fields
+from odoo.tools import date_utils
 
 
 class StockPicking(models.Model):
@@ -9,8 +10,8 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     @api.model
-    def get_inventory_tiles_data(self):
-        domain = []
+    def get_inventory_tiles_data(self,admin):
+        domain = [] if admin else [('user_id', '=', self.env.user.id)]
         tiles_data = {
             "stock_incoming": self.search_count(domain + [('picking_type_id.code', '=', 'incoming'),
                                                           ('state', 'not in', ['done', 'cancel'])]),
@@ -19,7 +20,7 @@ class StockPicking(models.Model):
             "stock_internal": self.search_count(domain + [('picking_type_id.code', '=', 'internal'),
                                                           ('state', 'not in', ['done', 'cancel'])])
         }
-        print('tile data',tiles_data)
+        print('tile data', tiles_data)
         return tiles_data
 
     @api.model
@@ -30,7 +31,7 @@ class StockPicking(models.Model):
         for product in products:
             if product.standard_price > 0:
                 data.update({product.name: product.standard_price})
-        print('Avg expense',data)
+        print('Avg expense', data)
         return data
 
     @api.model
@@ -45,16 +46,22 @@ class StockPicking(models.Model):
         print('valueeee', value)
         return value
 
-    @api.model
-    def get_picking_type_data(self):
-        domain = []
-        tiles_data = {
-            "stock_incoming": self.search_count(domain + [('picking_type_id.code', '=', 'incoming')]),
-            "stock_outgoing": self.search_count(domain + [('picking_type_id.code', '=', 'outgoing')]),
-            "stock_internal": self.search_count(domain + [('picking_type_id.code', '=', 'internal')])
-        }
-        print('tile data', tiles_data)
-        return tiles_data
+
+    def calculate_filter_date(self, selected_time_period):
+        """to calculate dates"""
+        from_date = False
+        to_date = False
+        today_date = fields.Date.today()
+        if selected_time_period == 'this_year':
+            from_date = date_utils.start_of(today_date, "year")
+            to_date = date_utils.end_of(today_date, "year")
+        elif selected_time_period == 'this_month':
+            from_date = date_utils.start_of(today_date, "month")
+            to_date = date_utils.end_of(today_date, "month")
+        elif selected_time_period == 'this_week':
+            from_date = date_utils.start_of(today_date, "week")
+            to_date = date_utils.end_of(today_date, "week")
+        return from_date, to_date
 
 
 class StockMove(models.Model):
@@ -73,7 +80,7 @@ class StockMove(models.Model):
             count.append(record.get('count'))
             name.append(record.get('name'))
         value = {'name': name, 'count': count}
-        print('location count',value)
+        print('location count', value)
         return value
 
 
@@ -98,12 +105,11 @@ class StockValuationLayer(models.Model):
             value.append(record.get('total_value'))
             name.append(record.get('name'))
         result = {'name': name, 'stock_value': value}
-        print('stock moves',result)
+        print('stock moves', result)
         return result
 
 
 class StockMoveLine(models.Model):
-
     _inherit = "stock.move.line"
 
     @api.model
@@ -111,17 +117,11 @@ class StockMoveLine(models.Model):
         """
         return all the product moves
         """
-        user_filter = ''
-        # if admin == False:
-        user_filter = f"AND stock_move_line.create_uid = {self.env.uid}"
-        # {user_filter}
-
         query = (f'''select product_template.name->>'en_US' as name,
-       sum(stock_move_line.quantity)as total_quantity from stock_move_line
-       inner join product_product ON stock_move_line.product_id = product_product.id
-       inner join product_template ON product_product.product_tmpl_id = product_template.id  {user_filter}
-
-       group by product_template.name->>'en_US' order by total_quantity DESC ;''')
+           sum(stock_move_line.quantity)as total_quantity from stock_move_line
+           inner join product_product ON stock_move_line.product_id = product_product.id
+           inner join product_template ON product_product.product_tmpl_id = product_template.id 
+           group by product_template.name->>'en_US' order by total_quantity DESC ;''')
         self._cr.execute(query)
         products_quantity = self._cr.dictfetchall()
         quantity = []
@@ -131,8 +131,6 @@ class StockMoveLine(models.Model):
             name.append(record.get('name'))
         value = {'name': name, 'count': quantity}
         return value
-
-
 
 
 
@@ -178,3 +176,16 @@ class StockMoveLine(models.Model):
     #         name.append(record.get('name'))
     #     value = {'name': name, 'count': quantity}
     #     return value
+
+
+
+#  @api.model
+#     def get_picking_type_data(self):
+#         domain = []
+#         picking_data = {
+#             "stock_incoming": self.search_count(domain + [('picking_type_id.code', '=', 'incoming')]),
+#             "stock_outgoing": self.search_count(domain + [('picking_type_id.code', '=', 'outgoing')]),
+#             "stock_internal": self.search_count(domain + [('picking_type_id.code', '=', 'internal')])
+#         }
+#         print('tile data', picking_data)
+#         return picking_data

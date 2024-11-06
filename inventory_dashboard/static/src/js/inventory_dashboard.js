@@ -13,24 +13,25 @@ class InventoryDashboard extends Component {
         this.pieRef = useRef('data_pie')
         this.doughnutRef = useRef('data_doughnut')
         this.lineRef = useRef('data_line')
+
         this.state = useState({
                  fetch_data: {},
                  location_data: {},
                 });
 
-
-        this.pieChart = null;
         this.barChart = null;
-        this.productChart = null;
+        this.pieChart = null;
         this.doughnutChart = null;
         this.lineChart = null;
+//        this.selected_time_period = false
 
 
         onWillStart(async () => {
+//                  this.isStockManager = await user.hasGroup("stock.group_stock_manager");
                   this._inventory_fetch_tile_data()
                   this. _storage_location_table()
-
             });
+
 
         this._location_data_pie()
         this._product_average_expense_bar()
@@ -39,9 +40,12 @@ class InventoryDashboard extends Component {
 
     }
 
+
     async _inventory_fetch_tile_data() {
-           var self = this;
-           this.orm.call("stock.picking", "get_inventory_tiles_data", [], {}).then((result) => {
+           const admin = this.isStockManager
+//           var self = this;
+//           var time = selected_period;
+           this.orm.call("stock.picking", "get_inventory_tiles_data", [admin], {}).then((result) => {
                this.state.fetch_data = result
                console.log('rrrr',this.state.fetch_data)
            });
@@ -98,14 +102,6 @@ class InventoryDashboard extends Component {
         })
        }
 
-    async _storage_location_table(){
-        await this.orm.call("stock.picking", "get_locations",[]
-        ).then((result) => {
-            this.state.location_data = result
-            console.log('dataaa',this.state.location_data)
-            });
-    }
-
     async _stock_valuation_doughnut_chart(){
         this.orm.call("stock.valuation.layer", "get_stock_value", []).then( (result) => {
             var product_names = result.name;
@@ -131,33 +127,75 @@ class InventoryDashboard extends Component {
              });
         }
 
+    async _storage_location_table(){
+        await this.orm.call("stock.picking", "get_locations",[]
+        ).then((result) => {
+            this.state.location_data = result
+            console.log('dataaa',this.state.location_data)
+            });
+    }
+
     async _product_move_line_chart(){
-//       const admin = this.isStockManager
-//       console.log(admin, "_product_move_chart")
         this.orm.call("stock.move.line", "get_product_moves",[]).then( (result) => {
-        var product_names = result.name;
-        var move_count = result.count;
-        var ctx = this.lineRef.el.id
-        if (this.lineChart){
-        this.lineChart.destroy();
-        }
-        this.lineChart = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: product_names,
-            datasets: [{
-                label: 'Product Move',
-                backgroundColor: [
-                                "#ff7c43","#2f4b7c","#a05195","#665191",
-                                "#d45087","#ff7c43","#ffa600","#a05195",
-                                "#6d5c16","#CCCCFF"
-                            ],
-                data: move_count
-           }]
-          },
-         });
+            var product_names = result.name;
+            var move_count = result.count;
+            var ctx = this.lineRef.el.id
+            if (this.lineChart){
+            this.lineChart.destroy();
+            }
+            this.lineChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: product_names,
+                datasets: [{
+                    label: 'Product Move',
+                    backgroundColor: [
+                                    "#ff7c43","#2f4b7c","#a05195","#665191",
+                                    "#d45087","#ff7c43","#ffa600","#a05195",
+                                    "#6d5c16","#CCCCFF"
+                                ],
+                    data: move_count
+                }]
+              },
+            });
         });
-        }
+    }
+
+    redirectToIncoming(){
+    this.env.services.action.doAction({
+         type: 'ir.actions.act_window',
+         name: 'Outgoing',
+         res_model: 'stock.picking',
+         views: [[false, "list"], [false, "form"]],
+         target: 'current',
+        domain : [['picking_type_id.code', '=','incoming'],
+                  ['state', 'not in',['done', 'cancel']]]
+       });
+ }
+
+    redirectToOutgoing(){
+    this.env.services.action.doAction({
+         type: 'ir.actions.act_window',
+         name: 'Outgoing',
+         res_model: 'stock.picking',
+         views: [[false, "list"], [false, "form"]],
+         target: 'current',
+        domain : [['picking_type_id.code', '=','outgoing'],
+                  ['state', 'not in',['done', 'cancel']]]
+       });
+ }
+
+    redirectToInternalTransfer(){
+    this.env.services.action.doAction({
+         type: 'ir.actions.act_window',
+         name: 'Internal Transfer',
+         res_model: 'stock.picking',
+         views: [[false, "list"], [false, "form"]],
+         target: 'current',
+        domain : [['picking_type_id.code', '=','internal'],
+                  ['state', 'not in',['done', 'cancel']]]
+       });
+ }
 
 }
 InventoryDashboard.template = "inventory_dashboard.InventoryDashboard";

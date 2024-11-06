@@ -2,12 +2,29 @@
 <templates>
     <t t-name="inventory_dashboard.InventoryDashboard">
         <div class=""
-             style="overflow-y:auto; max-height: 100vh; padding: 20px; overflow-x:auto;">
+             style="overflow-y:auto; max-height: 100vh; padding: 50px; overflow-x:auto;">
+            <div class="form-group col-2" id="top_product_button" style="float:right; width:100px;">
+<!--                <select class="filter_selection o_input me-5" style="margin-left:1350px" required="true">&ndash;&gt;-->
+<!--                        t-on-change="_onchange_selection" id="filter_selection">-->
+                <select id="filter_selection"
+                        t-on-change="selected_period"
+                        style="color:black; " t-ref="filter">
+                    <option id="this_year"
+                            value="this_year">This Year
+                    </option>
+                    <option id="this_month"
+                            value="this_month">This Month
+                    </option>
+                    <option id="this_week"
+                            value="this_week">This Week
+                    </option>
+                </select>
+            </div>
 
             <!--incoming stock product wise Tile-->
             <div class="row main-section" style="margin-left: 70px; ">
                 <div id="incoming_tile" class="col-md-4 col-sm-6 tot_tasks oh-payslip"
-                     style=" overflow: hidden; padding-top: 30px;">
+                     style=" overflow: hidden; padding-top: 30px;" t-on-click="redirectToIncoming">
                     <div class="oh-card" style="box-shadow:2px 4px 8px 2px rgba(0,0,0.3,0.2);
                 display: flex; justify-content: center;" role="button">
                         <div class="oh-card-body"
@@ -41,7 +58,7 @@
 
                 <!--outgoing stock product wise Tile-->
                 <div id="outgoing_tile" class="col-md-4 col-sm-6 tot_tasks oh-payslip"
-                     style=" overflow: hidden; padding-top: 30px;">
+                     style=" overflow: hidden; padding-top: 30px;" t-on-click="redirectToOutgoing">
                     <div class="oh-card" style="box-shadow:2px 4px 8px 2px rgba(0,0,0.3,0.2);
                 display: flex; justify-content: center;" role="button">
                         <div class="oh-card-body"
@@ -76,7 +93,7 @@
                 <!--internal transfer product wise Tile-->
                 <div id="internal_transfer_tile"
                      class="col-md-4 col-sm-6 tot_tasks oh-payslip"
-                     style=" overflow: hidden; padding-top: 30px;">
+                     style=" overflow: hidden; padding-top: 30px;" t-on-click="redirectToInternalTransfer">
                     <div class="oh-card" style="box-shadow:2px 4px 8px 2px rgba(0,0,0.3,0.2);
                 display: flex; justify-content: center;" role="button">
                         <div class="oh-card-body"
@@ -157,10 +174,6 @@
             <!-- warehouse location table-->
             <div class="year_to_date_graph_div col-sm-12 col-md-6 my-4 " style="margin-left:500px;">
                 <div class="chart-container card-shadow" id="tiles" style="float:right;">
-                    <!--                    <div style="height: 20px; max-height: 20px; text-align:center;">-->
-                    <!--                        <h2>Locations</h2>-->
-                    <!--                    </div>-->
-
                     <table style="margin-top: 30px;"
                            class="table table-hover" id="location_table">
                         <thead>
@@ -198,33 +211,15 @@
                         <div style="height: 20px; max-height: 20px; text-align:center;">
                             <h2>Product Move Chart</h2>
                         </div>
-<!--                        <div class="form-group col-2"-->
-<!--                             id="top_product_button" style="float:right;">-->
-<!--                            <select id="filter_selection"-->
-<!--                                    t-on-change="onchange_filter_selection"-->
-<!--                                    style="color:black; " t-ref="filter">-->
-<!--                                <option id="all_moves"-->
-<!--                                        value="all_moves">All Moves-->
-<!--                                </option>-->
-<!--                                <option id="this_month"-->
-<!--                                        value="this_month">This Month-->
-<!--                                </option>-->
-<!--                                <option id="this_week"-->
-<!--                                        value="this_week">This Week-->
-<!--                                </option>-->
-
-<!--                            </select>-->
-<!--                        </div>-->
                         <div class="graph_canvas" style="margin-top: 30px;">
-                            <canvas id="product_move_bar" height="150px" t-ref="data_line"
+                            <canvas id="canvas_line" height="150px" t-ref="data_line"
                                     width="200px"/>
                         </div>
                     </div>
                 </div>
             </div>
-         <br/>
-         <br/>
+            <br/>
+            <br/>
         </div>
     </t>
 </templates>
-
