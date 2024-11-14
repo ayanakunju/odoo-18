@@ -17,7 +17,6 @@
                                 </div>
                                 <h3>Initial Consultation</h3>
                             </div>
-
                             <p>Lorem ipsum is simply dummy text.</p>
                         </div>
                         <div class="service-card anime_card2">
@@ -87,5 +86,3 @@
         </xpath>
     </template>
 </odoo>
-
-

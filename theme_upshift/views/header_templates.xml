@@ -12,8 +12,7 @@
                                 <a class="navbar-brand" href="/home">
                                     <img src="/theme_upshift/static/src/img/Logo/logo-1.png"
                                          alt=""/>
-                                    <span class="span1" id="theme_name"
-                                    >Upshift
+                                    <span class="span1" id="theme_name">Upshift
                                     </span>
                                 </a>
                                 <button class="navbar-toggler"
@@ -69,12 +68,10 @@
                                    class="btn btn-primary d-none d-lg-block">
                                     Get in touch
                                     <span>
-                                        <img
-                                                src="/theme_upshift/static/src/img/icons/arrow.svg"
+                                        <img src="/theme_upshift/static/src/img/icons/arrow.svg"
                                                 class="ml-1"
                                                 width="25px"
-                                                alt=""
-                                        />
+                                                alt=""/>
                                     </span>
                                 </a>
                             </div>

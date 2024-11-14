@@ -115,7 +115,7 @@
             <!--            Service Section start here-->
             <section class="services-section section " id="section3">
                 <div class="section_heading container anime_h">
-                    <span>Service</span>
+                    <span style="color:black;">Service</span>
                     <h2>High-impact services for your business</h2>
                 </div>
 
@@ -192,7 +192,7 @@
             <!--            Process Section start here-->
             <section class="process-section section ">
                 <div class="section_heading container anime_h2">
-                    <span>Process</span>
+                    <span style="color:black;">Process</span>
                     <h2>Process that moves things forward</h2>
                 </div>
                 <div class="wrapper">
@@ -268,12 +268,10 @@
                             Learn more
 
                             <span>
-                                <img
-                                        src="/theme_upshift/static/src/img/icons/arrow.svg"
+                                <img src="/theme_upshift/static/src/img/icons/arrow.svg"
                                         class="ml-1"
                                         width="25px"
-                                        alt=""
-                                />
+                                        alt=""/>
                             </span>
                         </a>
                     </div>
@@ -300,8 +298,7 @@
                                     <h5 class="testimonial-author mb-1">
                                         Jacqueline Miller
                                     </h5>
-                                    <p class="testimonial-position">CEO of
-                                        Eduport
+                                    <p class="testimonial-position">CEO of Eduport
                                     </p>
                                 </div>
                             </div>
@@ -329,14 +326,18 @@
                                 data-bs-target="#testimonialCarousel"
                                 data-bs-slide="prev">
                             <span class="carousel-control-prev-icon"
-                                  aria-hidden="true"></span>
+                                  aria-hidden="true">
+
+                            </span>
                             <span class="visually-hidden">Previous</span>
                         </button>
                         <button class="carousel-control-next" type="button"
                                 data-bs-target="#testimonialCarousel"
                                 data-bs-slide="next">
                             <span class="carousel-control-next-icon"
-                                  aria-hidden="true"></span>
+                                  aria-hidden="true">
+
+                            </span>
                             <span class="visually-hidden">Next</span>
                         </button>
                     </div>

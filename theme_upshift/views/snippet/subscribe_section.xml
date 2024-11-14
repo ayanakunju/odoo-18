@@ -6,8 +6,7 @@
             <div class="wrapper">
                 <div class="container">
                     <div class="sub_content"
-                         t-att-style="'background-image: url(/theme_upshift
-                         /static/src/img/banner/sub.png)'">
+                         t-att-style="'background-image: url(/theme_upshift/static/src/img/banner/sub.png)'">
                         <h2>Enough talk, let’s get to work</h2>
                         <a href="#" class="btn btn-primary">
                             Learn more

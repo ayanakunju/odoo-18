@@ -453,6 +453,7 @@ template {
 .services-section .wrapper .services-grid .service-card h3 {
   font-size: 24px;
   font-weight: 500;
+  color: var(--black-color);
   padding-bottom: 10px;
 }
 .services-section .wrapper .services-grid .service-card p {
@@ -567,6 +568,7 @@ template {
 .process-section .wrapper .process-grid .service-card h3 {
   font-size: 20px;
   font-weight: 500;
+  color: var(--black-color);
   padding-bottom: 10px;
 }
 .process-section .wrapper .process-grid .service-card p {
@@ -679,6 +681,9 @@ template {
 .locations_section .wrapper {
   padding-top: 40px;
 }
+.locations_section .wrapper .location{
+    color: var(--black-color);
+}
 .locations_section .leaflet-control-attribution {
   display: none !important;
 }
@@ -777,6 +782,7 @@ padding-top:50px
 .status .number {
   font-size: 2.6rem;
   font-weight: 500;
+  color: var(--black-color);
   margin-bottom: 10px;
 }
 
